@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZXing;
 using ZXing.Common;
 using ZXing.QrCode.Internal;
@@ -26,7 +23,7 @@ namespace Util.Common
         /// <param name="codeWidth">二维码宽度</param>
         /// <param name="codeHeight">二维码长度</param>
         /// <returns></returns>
-        public static Bitmap GenerateQrCode(string content,Bitmap logo,int codeMargin=1,int codeWidth=250,int codeHeight = 250)
+        public static Bitmap GenerateQrCode(string content, Bitmap logo, int codeMargin = 1, int codeWidth = 250, int codeHeight = 250)
         {
             //声明二维码生成器
             MultiFormatWriter writer = new MultiFormatWriter();
@@ -44,7 +41,7 @@ namespace Util.Common
             BarcodeWriter barWriter = new BarcodeWriter();
             Bitmap result = barWriter.Write(matrix);//如果没有特殊参数声明，直接用barWriter.Write(content)好像也是可以的
             //插入Logo
-            if(logo != null)
+            if (logo != null)
             {
                 //计算二维码尺寸
                 // 第0位:左边距
@@ -87,7 +84,7 @@ namespace Util.Common
         /// <param name="content">二维码的内容</param>
         /// <param name="logoPath">二维码图标，如果没有则不会生成</param>
         /// <returns></returns>
-        public static Bitmap GenerateQrCode(string content,string logoPath)
+        public static Bitmap GenerateQrCode(string content, string logoPath)
         {
             Bitmap logo = null;
             if (!string.IsNullOrEmpty(logoPath) && File.Exists(logoPath))
@@ -105,7 +102,7 @@ namespace Util.Common
         /// <returns></returns>
         public static Bitmap GenerateQrCode(string content)
         {
-            return GenerateQrCode(content, logoPath:null);
+            return GenerateQrCode(content, logoPath: null);
         }
 
         /// <summary>
@@ -116,7 +113,7 @@ namespace Util.Common
         /// <param name="codeWidth">条码宽度</param>
         /// <param name="codeHeight">条码高度</param>
         /// <returns></returns>
-        public static Bitmap GenerateBarCode(string content,int codeMargin=1,int codeWidth=100,int codeHeight = 40)
+        public static Bitmap GenerateBarCode(string content, int codeMargin = 1, int codeWidth = 100, int codeHeight = 40)
         {
             //声明条码生成器
             BarcodeWriter writer = new BarcodeWriter();
@@ -141,7 +138,7 @@ namespace Util.Common
         /// <returns></returns>
         public static string ReadCode(Bitmap codeImage)
         {
-            if(codeImage == null)
+            if (codeImage == null)
             {
                 return string.Empty;
             }
@@ -164,7 +161,7 @@ namespace Util.Common
         /// <returns></returns>
         public static string ReadCode(string codePath)
         {
-            if(string.IsNullOrEmpty(codePath) || !File.Exists(codePath))
+            if (string.IsNullOrEmpty(codePath) || !File.Exists(codePath))
             {
                 return string.Empty;
             }

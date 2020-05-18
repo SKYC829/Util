@@ -8,7 +8,6 @@ using System.Net.Mime;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using Util.Common;
 using Util.DataObject;
 using Util.IO;
@@ -94,7 +93,7 @@ namespace Util.Net
             finally
             {
                 //最后不管怎样只要流读取器不为空就关闭流读取器，释放资源
-                if(reader != null)
+                if (reader != null)
                 {
                     reader.Close();
                     reader.Dispose();
@@ -139,7 +138,7 @@ namespace Util.Net
         /// <param name="host">要获取延迟的域名或IP</param>
         /// <param name="timeOut">超时时间</param>
         /// <returns></returns>
-        public static PingReply Ping(string host,int timeOut)
+        public static PingReply Ping(string host, int timeOut)
         {
             //初始化返回值
             PingReply result = null;
@@ -164,7 +163,7 @@ namespace Util.Net
         /// <param name="senderPasscode">发件人密码</param>
         /// <param name="emailBody">邮件内容</param>
         /// <param name="emailTitle">邮件标题</param>
-        public static void SendEmail(string receiverAddress,string senderAddress,string senderPasscode,string emailBody,string emailTitle)
+        public static void SendEmail(string receiverAddress, string senderAddress, string senderPasscode, string emailBody, string emailTitle)
         {
             SendEmail(receiverAddress, senderAddress, senderPasscode, emailBody, emailTitle, null);
         }
@@ -178,7 +177,7 @@ namespace Util.Net
         /// <param name="emailBody">邮件内容/param>
         /// <param name="emailTitle">邮件标题</param>
         /// <param name="emailAttachments">邮件附件</param>
-        public static void SendEmail(string receiverAddress, string senderAddress, string senderPasscode, string emailBody, string emailTitle,params FileInfo[] emailAttachments)
+        public static void SendEmail(string receiverAddress, string senderAddress, string senderPasscode, string emailBody, string emailTitle, params FileInfo[] emailAttachments)
         {
             SendEmail(receiverAddress, senderAddress, senderPasscode, emailBody, emailTitle, true, emailAttachments);
         }
@@ -193,7 +192,7 @@ namespace Util.Net
         /// <param name="emailTitle">邮件标题</param>
         /// <param name="enableSsl">是否启用SSL</param>
         /// <param name="emailAttachments">邮件附件</param>
-        public static void SendEmail(string receiverAddress, string senderAddress, string senderPasscode, string emailBody, string emailTitle, bool enableSsl ,params FileInfo[] emailAttachments)
+        public static void SendEmail(string receiverAddress, string senderAddress, string senderPasscode, string emailBody, string emailTitle, bool enableSsl, params FileInfo[] emailAttachments)
         {
             SendEmail(new List<string>() { receiverAddress }, senderAddress, senderPasscode, emailBody, emailTitle, enableSsl, emailAttachments);
         }
@@ -219,13 +218,13 @@ namespace Util.Net
             //循环收件人列表添加收件人
             foreach (string receiveAddress in receivers)
             {
-                if(string.IsNullOrEmpty(receiveAddress) || !RegularUtil.RegexEmail(receiveAddress))
+                if (string.IsNullOrEmpty(receiveAddress) || !RegularUtil.RegexEmail(receiveAddress))
                 {
                     continue;
                 }
                 mailMessage.To.Add(receiveAddress);
             }
-            if(mailMessage.To.Count <= 0)
+            if (mailMessage.To.Count <= 0)
             {
                 throw new ArgumentException("请填写收件人");
             }
@@ -242,7 +241,7 @@ namespace Util.Net
             //设置邮件优先级为普通，似乎是过高容易被当成垃圾邮件
             mailMessage.Priority = MailPriority.Normal;
             //如果附件列表不为空且包含附件
-            if(emailAttachments != null && emailAttachments.Length > 0)
+            if (emailAttachments != null && emailAttachments.Length > 0)
             {
                 //循环附件列表添加附件
                 foreach (FileInfo attachmentFile in emailAttachments)
@@ -262,7 +261,7 @@ namespace Util.Net
             string firstReciever = receivers.Where(p => p.IndexOf('@') > -1).FirstOrDefault();
             //计算收件人的Smtp协议
             int hostStart = firstReciever.IndexOf('@');
-            string smtpHost = string.Format("smtp{0}", firstReciever.Substring(hostStart, firstReciever.Length - hostStart).Replace('@','.'));
+            string smtpHost = string.Format("smtp{0}", firstReciever.Substring(hostStart, firstReciever.Length - hostStart).Replace('@', '.'));
             //设置smtp协议
             smtpClient.Host = smtpHost;
             //设置是否启用SSL
@@ -282,7 +281,7 @@ namespace Util.Net
             {
                 LogUtil.WriteLog(ex);
                 //如果错误提示为需要开启SSL并且没有打开SSL
-                if(ex.Message == "need EHLO and AUTH first" && !enableSsl)
+                if (ex.Message == "need EHLO and AUTH first" && !enableSsl)
                 {
                     //迭代发送邮件并启用SSL
                     SendEmail(receivers, senderAddress, senderPasscode, emailBody, emailTitle, true, emailAttachments);

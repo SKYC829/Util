@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Util.DataObject;
 using Util.IO.Log;
 
@@ -30,17 +26,17 @@ namespace Util.IO
         /// <param name="fromBytes">原密钥数组</param>
         /// <param name="limitSize">密钥最大长度</param>
         /// <returns></returns>
-        private static byte[] GeneralKeyBytes(byte[] fromBytes,int limitSize)
+        private static byte[] GeneralKeyBytes(byte[] fromBytes, int limitSize)
         {
             //如果最大长度小于等于0，则返回原密钥自身
-            if(limitSize <= 0)
+            if (limitSize <= 0)
             {
                 return fromBytes;
             }
             //定义一个新数组，用于接收新密钥
             byte[] result = new byte[limitSize];
             //如果来源密钥长度大于密钥最大长度，则对密钥进行裁剪
-            if(fromBytes.Length > limitSize)
+            if (fromBytes.Length > limitSize)
             {
                 Buffer.BlockCopy(fromBytes, 0, result, 0, limitSize);
             }
@@ -57,13 +53,14 @@ namespace Util.IO
         /// <param name="transform">加密、解密器</param>
         /// <param name="value">要加密、解密的二进制数组</param>
         /// <returns></returns>
-        private static byte[] DoTransform(ICryptoTransform transform,byte[] value)
+        private static byte[] DoTransform(ICryptoTransform transform, byte[] value)
         {
             byte[] result = null;
             try
             {
                 result = transform.TransformFinalBlock(value, 0, value.Length);
-            }catch(CryptographicException)
+            }
+            catch (CryptographicException)
             {
                 throw new CryptographicException("加密不匹配！");
             }
@@ -83,7 +80,7 @@ namespace Util.IO
         /// <param name="privateKey">私钥</param>
         /// <param name="publicKey">公钥</param>
         /// <returns></returns>
-        public static string EncryptAES(object content,string privateKey,string publicKey)
+        public static string EncryptAES(object content, string privateKey, string publicKey)
         {
             //如果要加密的对象是空，就无法加密，直接返回空
             if (StringUtil.IsEmpty(content))
@@ -112,7 +109,7 @@ namespace Util.IO
             //序列化私钥
             byte[] privateKeyBytes = Encoding.Default.GetBytes(privateKey);
             //计算私钥并设置
-            managed.Key = GeneralKeyBytes(privateKeyBytes,16);
+            managed.Key = GeneralKeyBytes(privateKeyBytes, 16);
             //序列化公钥
             byte[] publicKeyBytes = Encoding.Default.GetBytes(publicKey);
             //计算公钥并设置
@@ -188,7 +185,7 @@ namespace Util.IO
                 //如果发生解密异常则认为是密钥错误
                 LogUtil.WriteException(ce.ToString());
             }
-            catch(System.Runtime.Serialization.SerializationException se)
+            catch (System.Runtime.Serialization.SerializationException se)
             {
                 //如果发生序列化异常则认为是密文错误
                 LogUtil.WriteException(se.ToString());
@@ -209,7 +206,7 @@ namespace Util.IO
         /// <param name="privateKey">私钥</param>
         /// <param name="publicKey">公钥</param>
         /// <returns></returns>
-        public static string EncryptDES(object content,string privateKey,string publicKey)
+        public static string EncryptDES(object content, string privateKey, string publicKey)
         {
             //如果要加密的对象是空，就无法加密，直接返回空
             if (StringUtil.IsEmpty(content))
@@ -255,7 +252,7 @@ namespace Util.IO
         /// <param name="privateKey">私钥</param>
         /// <param name="publicKey">公钥</param>
         /// <returns></returns>
-        public static T DeEncryptDES<T>(string content,string privateKey,string publicKey)
+        public static T DeEncryptDES<T>(string content, string privateKey, string publicKey)
         {
             T result = default(T);
             //如果要解密的对象是空，就无法解密，直接返回空
@@ -337,7 +334,7 @@ namespace Util.IO
                     result += resultBytes[i].ToString("x2");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //如果发生异常则认为加密失败
                 LogUtil.WriteException(ex.ToString());

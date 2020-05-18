@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.Common
@@ -51,7 +47,7 @@ namespace Util.Common
                 resource.Dispose();
                 result = true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogUtil.WriteException(ex.ToString());
             }
@@ -67,7 +63,7 @@ namespace Util.Common
         public static string GetDiskSerialNumber(string diskFlag = "C")
         {
             //打开对应硬盘盘符的WMI实例
-            ManagementObject disk = OpenWMIObject(string.Format("win32_logicaldisk.deviceid=\"{0}:\"",diskFlag.Trim(':'))); //为了防止输入错误，导致“：”重复，所以这里把“：” Trim掉
+            ManagementObject disk = OpenWMIObject(string.Format("win32_logicaldisk.deviceid=\"{0}:\"", diskFlag.Trim(':'))); //为了防止输入错误，导致“：”重复，所以这里把“：” Trim掉
             //将WMI信息绑定到WMI实例对象
             disk.Get();
             //获取这个硬盘的WMI信息中名为VolumeSerialNumber的属性的值
@@ -188,7 +184,7 @@ namespace Util.Common
         /// <param name="specialFolder"></param>
         /// <param name="folderOption"></param>
         /// <returns></returns>
-        public static string GetSpecialFolder(Environment.SpecialFolder specialFolder,Environment.SpecialFolderOption folderOption)
+        public static string GetSpecialFolder(Environment.SpecialFolder specialFolder, Environment.SpecialFolderOption folderOption)
         {
             return Environment.GetFolderPath(specialFolder, folderOption);
         }
@@ -234,7 +230,7 @@ namespace Util.Common
             foreach (ManagementBaseObject memory in physicalMemorys.GetInstances())
             {
                 //获取内存实例的WMI信息中名为capacity的属性的值并尝试转换为float
-                bool isValue = float.TryParse(memory.GetPropertyValue("capacity").ToString(),out float memoryValue);
+                bool isValue = float.TryParse(memory.GetPropertyValue("capacity").ToString(), out float memoryValue);
                 if (!isValue) //如果无法转换则这个内存可能有异常，跳过计算
                 {
                     continue;

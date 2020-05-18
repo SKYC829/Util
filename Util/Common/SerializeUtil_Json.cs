@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Util.IO.Log;
 
@@ -43,7 +39,7 @@ namespace Util.Common
         /// <param name="from">要序列化的Json</param>
         /// <param name="formatJson">是否格式化</param>
         /// <returns></returns>
-        public static string ToJson(object from,bool formatJson)
+        public static string ToJson(object from, bool formatJson)
         {
             //调用JsonConvert直接序列化对象，如果formatJson为true则会让返回的字符串格式更好看
             return JsonConvert.SerializeObject(from, formatJson ? Formatting.Indented : Formatting.None);
@@ -77,7 +73,7 @@ namespace Util.Common
         /// <param name="fromJsonStr">要获取值的Json字符串</param>
         /// <param name="key">要获取的键</param>
         /// <returns></returns>
-        public static object GetJsonValue(string fromJsonStr,string key)
+        public static object GetJsonValue(string fromJsonStr, string key)
         {
             //定义一个js的序列化工具
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -87,12 +83,13 @@ namespace Util.Common
             try
             {
                 //如果解析成功并且键值对内包含要获取的键
-                if(jsonDic!= null && jsonDic.ContainsKey(key))
+                if (jsonDic != null && jsonDic.ContainsKey(key))
                 {
                     //取出对应的值
                     result = jsonDic[key];
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //如果发生错误则序列化失败
                 LogUtil.WriteException(ex.Message);

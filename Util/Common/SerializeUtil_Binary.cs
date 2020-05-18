@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.Common
@@ -69,7 +64,7 @@ namespace Util.Common
                 //反序列化数据流
                 result = (T)formatter.Deserialize(fromStream);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //如果发生错误则序列化失败
                 LogUtil.WriteException(ex.ToString());
@@ -112,7 +107,7 @@ namespace Util.Common
         /// <returns></returns>
         public static object FromBinary(byte[] fromBytes)
         {
-            if(fromBytes == null || fromBytes.Length <= 0)
+            if (fromBytes == null || fromBytes.Length <= 0)
             {
                 return null;
             }

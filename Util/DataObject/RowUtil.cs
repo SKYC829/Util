@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Util.DataObject
 {
@@ -19,10 +15,10 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static object Get(DataRow dataRow,string fieldName)
+        public static object Get(DataRow dataRow, string fieldName)
         {
             //如果要取值的数据行为空，则返回空
-            if(dataRow == null)
+            if (dataRow == null)
             {
                 return null;
             }
@@ -32,7 +28,7 @@ namespace Util.DataObject
                 return null;
             }
             //如果这个数据行的状态为分离的(即不存在于数据表里)状态，则返回为空
-            if(dataRow.RowState == DataRowState.Detached)
+            if (dataRow.RowState == DataRowState.Detached)
             {
                 return null;
             }
@@ -46,7 +42,7 @@ namespace Util.DataObject
         /// <param name="toType">要转换的类型</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static object Get(DataRow dataRow,Type toType,string fieldName)
+        public static object Get(DataRow dataRow, Type toType, string fieldName)
         {
             object fromValue = Get(dataRow, fieldName);
             return StringUtil.Get(toType, fromValue);
@@ -59,7 +55,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static T Get<T>(DataRow dataRow,string fieldName)
+        public static T Get<T>(DataRow dataRow, string fieldName)
         {
             object fromValue = Get(dataRow, fieldName);
             return StringUtil.Get<T>(fromValue);
@@ -71,7 +67,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static bool GetBoolean(DataRow dataRow,string fieldName)
+        public static bool GetBoolean(DataRow dataRow, string fieldName)
         {
             return Get<bool>(dataRow, fieldName);
         }
@@ -82,7 +78,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static int GetInt(DataRow dataRow,string fieldName)
+        public static int GetInt(DataRow dataRow, string fieldName)
         {
             return Get<int>(dataRow, fieldName);
         }
@@ -93,7 +89,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static double GetDouble(DataRow dataRow,string fieldName)
+        public static double GetDouble(DataRow dataRow, string fieldName)
         {
             return Get<double>(dataRow, fieldName);
         }
@@ -104,7 +100,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static decimal GetDecimal(DataRow dataRow,string fieldName)
+        public static decimal GetDecimal(DataRow dataRow, string fieldName)
         {
             return Get<decimal>(dataRow, fieldName);
         }
@@ -115,7 +111,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static string GetString(DataRow dataRow,string fieldName)
+        public static string GetString(DataRow dataRow, string fieldName)
         {
             return Get<string>(dataRow, fieldName);
         }
@@ -126,7 +122,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要取值的数据行</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static DateTime? GetDateTime(DataRow dataRow,string fieldName)
+        public static DateTime? GetDateTime(DataRow dataRow, string fieldName)
         {
             object fromValue = Get(dataRow, fieldName);
             return StringUtil.GetDateTime(fromValue);
@@ -138,7 +134,7 @@ namespace Util.DataObject
         /// <param name="dataRow">要设置值的数据行</param>
         /// <param name="fieldName">要设置值的字段</param>
         /// <param name="fieldValue">要设置的值</param>
-        public static void Set(DataRow dataRow,string fieldName,object fieldValue)
+        public static void Set(DataRow dataRow, string fieldName, object fieldValue)
         {
             //如果来源数据行的数据表没有该字段，则自动新增字段
             if (!dataRow.Table.Columns.Contains(fieldName))

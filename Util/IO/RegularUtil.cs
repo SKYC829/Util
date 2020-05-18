@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Regular = System.Text.RegularExpressions;
 
 namespace Util.IO
@@ -70,7 +66,7 @@ namespace Util.IO
         /// <param name="fromString">传入的字符串</param>
         /// <param name="regexExpression">正则表达式</param>
         /// <returns></returns>
-        public static bool Regex(string fromString,string regexExpression)
+        public static bool Regex(string fromString, string regexExpression)
         {
             return Regular.Regex.IsMatch(fromString, regexExpression);
         }
@@ -81,9 +77,9 @@ namespace Util.IO
         /// <param name="fromString">要取值的文本</param>
         /// <param name="regexExpression">正则表达式</param>
         /// <returns></returns>
-        public static string Get(string fromString,string regexExpression)
+        public static string Get(string fromString, string regexExpression)
         {
-            return GetAll(fromString,regexExpression).FirstOrDefault().Value;
+            return GetAll(fromString, regexExpression).FirstOrDefault().Value;
         }
 
         /// <summary>
@@ -92,7 +88,7 @@ namespace Util.IO
         /// <param name="fromString">要取值的文本</param>
         /// <param name="regexExpression">正则表达式</param>
         /// <returns></returns>
-        public static Match[] GetAll(string fromString,string regexExpression)
+        public static Match[] GetAll(string fromString, string regexExpression)
         {
             return Regular.Regex.Matches(fromString, regexExpression).Cast<Match>().ToArray();
         }
@@ -115,7 +111,7 @@ namespace Util.IO
         /// <returns></returns>
         public static bool RegexCellPhone(string fromString)
         {
-            string cellPhoneExpression = string.Format(@"^{0}|{1}|{2}|{3}$",MAINLAND_CELLPHONE,TAIWAN_CELLPHONE,HONGKONG_CELLPHONE,MACAO_CELLPHONE);
+            string cellPhoneExpression = string.Format(@"^{0}|{1}|{2}|{3}$", MAINLAND_CELLPHONE, TAIWAN_CELLPHONE, HONGKONG_CELLPHONE, MACAO_CELLPHONE);
             return Regex(fromString, cellPhoneExpression);
         }
 

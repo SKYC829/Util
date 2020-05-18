@@ -3,11 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.DataObject
@@ -30,15 +27,15 @@ namespace Util.DataObject
             //初始化返回值
             object result = from;
             //如果对象是JToken类型，则进行取值
-            if(from is JToken)
+            if (from is JToken)
             {
                 JToken token = from as JToken;
-                if(token == null)
+                if (token == null)
                 {
                     result = null;
                 }
                 //如果对象是JValue则返回JValue的值
-                else if(token is JValue)
+                else if (token is JValue)
                 {
                     result = (token as JValue).Value;
                 }
@@ -62,32 +59,32 @@ namespace Util.DataObject
         /// <param name="from">要取值的对象</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static object Get(object from,string fieldName)
+        public static object Get(object from, string fieldName)
         {
             //初始化返回值
             object result = null;
             //如果来源对象不为空就开始取值
-            if(from != null)
+            if (from != null)
             {
                 //获取来源对象的类型
                 Type fromType = from.GetType();
                 //如果是值类型或者枚举类型，是不包含key的，无法获取
-                if(fromType.IsValueType || fromType.IsEnum)
+                if (fromType.IsValueType || fromType.IsEnum)
                 {
                     result = null;
                 }
                 //如果是键值对类型，则用DictionaryUtil获取
-                else if(from is IDictionary)
+                else if (from is IDictionary)
                 {
                     result = DictionaryUtil.Get(from as IDictionary, fieldName);
                 }
                 //如果是数据行，则用RowUtil获取
-                else if(from is DataRow)
+                else if (from is DataRow)
                 {
                     result = RowUtil.Get(from as DataRow, fieldName);
                 }
                 //如果是Json对象，则直接以集合的形式获取
-                else if(from is JObject)
+                else if (from is JObject)
                 {
                     result = Get((from as JObject)[fieldName]);
                 }
@@ -97,7 +94,7 @@ namespace Util.DataObject
                     //反射获取到和要取值的字段名一样的属性
                     PropertyInfo property = fromType.GetProperty(fieldName);
                     //如果属性存在，就获取属性的值
-                    if(property != null)
+                    if (property != null)
                     {
                         result = property.GetValue(from);
                     }
@@ -106,14 +103,14 @@ namespace Util.DataObject
                         //否则获取同名字段
                         FieldInfo field = fromType.GetField(fieldName);
                         //如果字段存在，就获取字段的值
-                        if(field != null)
+                        if (field != null)
                         {
                             result = field.GetValue(from);
                         }
                     }
                 }
                 //当到这一步，如果返回结果不是空的话
-                if(result != null)
+                if (result != null)
                 {
                     //获取到返回结果的类型
                     Type resultType = result.GetType();
@@ -124,7 +121,7 @@ namespace Util.DataObject
                         genericType = resultType.GetGenericArguments().FirstOrDefault();
                     }
                     //如果返回结果是Json数组或者数组，或者泛型是Json对象，则把返回结果转换为List的形式，并把数组中的Json对象转换为键值对
-                    if(result is JArray || result is ArrayList || (genericType != null && (genericType == typeof(JObject) || genericType.FullName == "System.Object")))
+                    if (result is JArray || result is ArrayList || (genericType != null && (genericType == typeof(JObject) || genericType.FullName == "System.Object")))
                     {
                         IList fromList = result as IList;
                         IList toList = ConvertList(fromList);
@@ -132,7 +129,7 @@ namespace Util.DataObject
                         result = toList;
                     }
                     //如果返回结果就是个Json对象，则把Json对象转换为键值对
-                    else if(result is JObject)
+                    else if (result is JObject)
                     {
                         result = result.ToDictionary();
                     }
@@ -148,7 +145,7 @@ namespace Util.DataObject
         /// <param name="from">要取值的对象</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static T Get<T>(object from,string fieldName)
+        public static T Get<T>(object from, string fieldName)
         {
             object result = Get(from, fieldName);
             return StringUtil.Get<T>(result);
@@ -160,7 +157,7 @@ namespace Util.DataObject
         /// <param name="from">要取值的对象</param>
         /// <param name="fieldName">要取值的字段</param>
         /// <returns></returns>
-        public static int GetInt(object from,string fieldName)
+        public static int GetInt(object from, string fieldName)
         {
             return Get<int>(from, fieldName);
         }
@@ -193,32 +190,32 @@ namespace Util.DataObject
         /// <param name="from">要设置值的对象</param>
         /// <param name="fieldName">要设置值的字段名</param>
         /// <param name="fieldValue">要设置的值</param>
-        public static void Set(object from,string fieldName,object fieldValue)
+        public static void Set(object from, string fieldName, object fieldValue)
         {
             //如果来源对象为空，则无法设置值
-            if(from == null)
+            if (from == null)
             {
                 return;
             }
             //获取到来源对象的类型
             Type fromType = from.GetType();
             //如果来源类型是值类型或枚举类型，也无法设置值
-            if(fromType.IsValueType || fromType.IsEnum)
+            if (fromType.IsValueType || fromType.IsEnum)
             {
                 return;
             }
             //如果来源类型是键值对，直接设置即可
-            else if(from is IDictionary)
+            else if (from is IDictionary)
             {
                 (from as IDictionary)[fieldName] = fieldValue;
             }
             //如果来源对象是数据行，则调用RowUtil进行设置
-            else if(from is DataRow)
+            else if (from is DataRow)
             {
                 RowUtil.Set(from as DataRow, fieldName, fieldValue);
             }
             //如果来源对象是Json对象，则将值转换为JValue然后进行设置
-            else if(from is JObject)
+            else if (from is JObject)
             {
                 (from as JObject)[fieldName] = new JValue(fieldValue);
             }
@@ -236,12 +233,12 @@ namespace Util.DataObject
         /// <param name="fromObject">要设置值的对象</param>
         /// <param name="fieldName">要设置值的字段名</param>
         /// <param name="fieldValue">要设置的值</param>
-        public static void Set(Type fromType,object fromObject,string fieldName,object fieldValue)
+        public static void Set(Type fromType, object fromObject, string fieldName, object fieldValue)
         {
             //获取这个对象类型中同名的属性
             PropertyInfo property = fromType.GetProperty(fieldName);
             //如果属性不为空
-            if(property != null)
+            if (property != null)
             {
                 //获取到属性的类型
                 Type propertyType = property.PropertyType;
@@ -254,7 +251,7 @@ namespace Util.DataObject
             //获取这个对象类型中同名的字段
             FieldInfo field = fromType.GetField(fieldName);
             //如果字段不为空
-            if(field != null)
+            if (field != null)
             {
                 //获取到字段的类型
                 Type fieldType = field.FieldType;
@@ -278,7 +275,7 @@ namespace Util.DataObject
             foreach (object item in from)
             {
                 //如果是Jobject的话，就把Jobject转换为字典，再添加到列表里
-                if(item is JObject)
+                if (item is JObject)
                 {
                     JObject token = item as JObject;
                     result.Add(token.ToDictionary());
@@ -298,7 +295,7 @@ namespace Util.DataObject
         /// <param name="fromType">要写入值的对象的类型</param>
         /// <param name="value">要写入的值</param>
         /// <returns></returns>
-        private static bool CanWrite(Type fromType,object value)
+        private static bool CanWrite(Type fromType, object value)
         {
             //如果来源对象类型不是类，则可以写入
             if (!fromType.IsClass)
@@ -306,7 +303,7 @@ namespace Util.DataObject
                 return true;
             }
             //如果来源对象类型是字符串，也可以写入
-            if(fromType == typeof(string))
+            if (fromType == typeof(string))
             {
                 return true;
             }
@@ -316,7 +313,7 @@ namespace Util.DataObject
                 return true;
             }
             //如果来源对象是类，并且要设置的值是Json对象，则可以写入
-            if(value is JObject && fromType.IsClass)
+            if (value is JObject && fromType.IsClass)
             {
                 return true;
             }
@@ -332,15 +329,15 @@ namespace Util.DataObject
         /// <param name="toObject">目标对象</param>
         /// <param name="fromObject">要转换的对象</param>
         /// <returns></returns>
-        public static T Convert<T>(T toObject,object fromObject)where T : class
+        public static T Convert<T>(T toObject, object fromObject) where T : class
         {
             //如果来源对象就是目标对象，直接强制转换
-            if(fromObject is T)
+            if (fromObject is T)
             {
                 return fromObject as T;
             }
             //如果目标对象是空，则无法转换
-            if(toObject == null)
+            if (toObject == null)
             {
                 return null;
             }
@@ -357,10 +354,10 @@ namespace Util.DataObject
         /// <typeparam name="T">要转换的对象的类型</typeparam>
         /// <param name="fromObject">要转换的对象</param>
         /// <returns></returns>
-        public static T Convert<T>(object fromObject)where T : class, new()
+        public static T Convert<T>(object fromObject) where T : class, new()
         {
             //如果来源对象就是目标对象，直接强制转换即可
-            if(fromObject is T)
+            if (fromObject is T)
             {
                 return fromObject as T;
             }
@@ -376,9 +373,9 @@ namespace Util.DataObject
         /// <param name="toObject">目标对象</param>
         /// <param name="fromObject">来源对象</param>
         /// <returns></returns>
-        public static object Convert(object toObject,object fromObject)
+        public static object Convert(object toObject, object fromObject)
         {
-            if(toObject == null)
+            if (toObject == null)
             {
                 return null;
             }
@@ -391,7 +388,7 @@ namespace Util.DataObject
                     continue;
                 }
                 object fieldValue = Get(fromObject, property.Name);
-                if(fieldValue == null || fieldValue.GetType() == typeof(DBNull))
+                if (fieldValue == null || fieldValue.GetType() == typeof(DBNull))
                 {
                     fieldValue = null;
                 }
@@ -401,7 +398,8 @@ namespace Util.DataObject
                     {
                         property.SetValue(toObject, StringUtil.Get(property.PropertyType, fieldValue));
                     }
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     LogUtil.WriteException(ex.ToString());
                 }
@@ -417,7 +415,8 @@ namespace Util.DataObject
                     {
                         field.SetValue(toObject, StringUtil.Get(field.FieldType, fieldValue));
                     }
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     LogUtil.WriteException(ex.ToString());
                 }

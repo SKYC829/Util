@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using Util.DataObject;
 using Util.IO.Log;
@@ -30,10 +26,10 @@ namespace Util.IO
         /// <param name="nodeAttributeName">子节点上的特性的名称</param>
         /// <param name="nodeAttributeValue">子节点上的特性的值</param>
         /// <returns></returns>
-        public static XmlElement GetElement(XmlNode xmlNode,string nodeAttributeName,string nodeAttributeValue)
+        public static XmlElement GetElement(XmlNode xmlNode, string nodeAttributeName, string nodeAttributeValue)
         {
             //如果根节点为空，就认为获取不到子节点，直接返回空
-            if(xmlNode == null)
+            if (xmlNode == null)
             {
                 return null;
             }
@@ -53,7 +49,7 @@ namespace Util.IO
         /// <para>&lt;a&gt;</para>
         /// </param>
         /// <returns></returns>
-        public static XmlElement GetElement(XmlNode xmlNode,string tag)
+        public static XmlElement GetElement(XmlNode xmlNode, string tag)
         {
             return GetElement(xmlNode, new string[] { tag }).FirstOrDefault();
         }
@@ -69,15 +65,15 @@ namespace Util.IO
         /// <para>&lt;a&gt;</para>
         /// </param>
         /// <returns></returns>
-        public static XmlElement[] GetElement(XmlNode xmlNode,params string[] tags)
+        public static XmlElement[] GetElement(XmlNode xmlNode, params string[] tags)
         {
             //初始化返回值
             List<XmlElement> result = new List<XmlElement>();
             //如果根节点不为空才进行查找取值
-            if(xmlNode != null)
+            if (xmlNode != null)
             {
                 //如果要用来查找的标签为空或没传入特定的标签，就获取根节点下所有子节点
-                if(tags == null || tags.Length == 0)
+                if (tags == null || tags.Length == 0)
                 {
                     result.AddRange(xmlNode.ChildNodes.Cast<XmlElement>());
                 }
@@ -97,7 +93,7 @@ namespace Util.IO
         /// <param name="xmlElement">要取值的Xml节点</param>
         /// <param name="attributeName">要取值的特性名称</param>
         /// <returns></returns>
-        public static T Get<T>(XmlElement xmlElement,string attributeName)
+        public static T Get<T>(XmlElement xmlElement, string attributeName)
         {
             //初始化返回值
             T result = default(T);
@@ -207,7 +203,7 @@ namespace Util.IO
         /// <param name="xmlElement">要设置值的节点</param>
         /// <param name="attributeName">要设置值的特性的名称</param>
         /// <param name="attributeValue">要设置的值</param>
-        public static void Set(XmlElement xmlElement,string attributeName,object attributeValue)
+        public static void Set(XmlElement xmlElement, string attributeName, object attributeValue)
         {
             xmlElement.SetAttribute(attributeName, StringUtil.GetString(attributeValue));
         }

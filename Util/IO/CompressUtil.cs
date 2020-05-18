@@ -1,12 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.IO
@@ -38,12 +33,12 @@ namespace Util.IO
         /// <param name="zipStream">要添加文件的压缩文件输出流</param>
         /// <param name="fileSystem">要添加的文件或文件夹</param>
         /// <param name="rootPath">该文件或文件夹在压缩文件内的父级路径</param>
-        public static void AddEntry(ZipOutputStream zipStream,FileSystemInfo fileSystem,string rootPath = "")
+        public static void AddEntry(ZipOutputStream zipStream, FileSystemInfo fileSystem, string rootPath = "")
         {
             ZipEntry zipEntry = null;
             Console.WriteLine(fileSystem.FullName);
             //如果是文件夹
-            if(fileSystem is DirectoryInfo)
+            if (fileSystem is DirectoryInfo)
             {
                 //创建压缩文件内的路劲
                 zipEntry = new ZipEntry(Path.Combine(rootPath, fileSystem.Name + "\\"));
@@ -65,7 +60,7 @@ namespace Util.IO
                 //将压缩文件内的文件夹路径添加到压缩文件输出流
                 zipStream.PutNextEntry(zipEntry);
                 //读取文件数据
-                using (FileStream readFile = new FileStream(fileSystem.FullName,FileMode.Open,FileAccess.Read,FileShare.Read))
+                using (FileStream readFile = new FileStream(fileSystem.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     ////将读文件流的索引定位到文件的开头
                     //readFile.Seek(0, SeekOrigin.Begin);
@@ -86,7 +81,8 @@ namespace Util.IO
                             OnCompress?.Invoke(fileSystem.Name, totalReadNum, readFile.Length, false);
                             //将文件数据写入到压缩文件输出流内
                             zipStream.WriteAsync(readDataBytes, 0, readNum).Wait();
-                        }catch(Exception ex)
+                        }
+                        catch (Exception ex)
                         {
                             //有可能会发生文件占用，文件不存在等异常
                             LogUtil.WriteException(ex.ToString());
@@ -103,7 +99,7 @@ namespace Util.IO
         public static void AddFile(FileSystemInfo fileSystem)
         {
             //如果没有同名文件则添加文件进去
-            if(!ZipFileList.Exists(p=>p.Name == fileSystem.Name))
+            if (!ZipFileList.Exists(p => p.Name == fileSystem.Name))
             {
                 ZipFileList.Add(fileSystem);
             }
@@ -137,7 +133,7 @@ namespace Util.IO
         /// </summary>
         /// <param name="toFile">输出的zip文件路径</param>
         /// <param name="passCode">压缩文件密码</param>
-        public static void Compress(string toFile,string passCode)
+        public static void Compress(string toFile, string passCode)
         {
             InternalCompress(toFile, passCode);
         }
@@ -147,7 +143,7 @@ namespace Util.IO
         /// </summary>
         /// <param name="toFile">输出的zip文件路径</param>
         /// <param name="passCode">压缩文件密码</param>
-        internal static void InternalCompress(string toFile,string passCode)
+        internal static void InternalCompress(string toFile, string passCode)
         {
             //验证文件路径是否是以zip结尾，如果不是的话补上，防止输出的文件没有后缀名
             toFile = VerifyFileName(toFile);
@@ -180,7 +176,7 @@ namespace Util.IO
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //如果发生异常则认为压缩失败，删除已输出的文件
                 LogUtil.WriteException(ex.ToString());
@@ -227,7 +223,7 @@ namespace Util.IO
         /// </summary>
         /// <param name="fromFile">要解压的压缩文件</param>
         /// <param name="toPath">要解压到的目录</param>
-        public static void DeCompress(string fromFile,string toPath)
+        public static void DeCompress(string fromFile, string toPath)
         {
             DeCompress(fromFile, toPath, "");
         }
@@ -238,7 +234,7 @@ namespace Util.IO
         /// <param name="fromFile">要解压的压缩文件</param>
         /// <param name="toPath">要解压到的目录</param>
         /// <param name="passCode">压缩文件密码</param>
-        public static void DeCompress(string fromFile,string toPath,string passCode)
+        public static void DeCompress(string fromFile, string toPath, string passCode)
         {
             InternalDeCompress(fromFile, toPath, passCode);
         }
@@ -249,7 +245,7 @@ namespace Util.IO
         /// <param name="fromFile">要解压的压缩文件</param>
         /// <param name="toPath">要解压到的目录</param>
         /// <param name="passCode">压缩文件密码</param>
-        internal static void InternalDeCompress(string fromFile,string toPath,string passCode)
+        internal static void InternalDeCompress(string fromFile, string toPath, string passCode)
         {
             //验证文件路径是否是以zip结尾，如果不是的话补上，防止找不到要解压的文件
             fromFile = VerifyFileName(fromFile);
@@ -275,7 +271,7 @@ namespace Util.IO
                 try
                 {
                     //如果压缩文件输入流能获取到下一个压缩文件对象，就将他解压输出
-                    while ((currentEntry = zipStream.GetNextEntry())!=null)
+                    while ((currentEntry = zipStream.GetNextEntry()) != null)
                     {
                         //如果压缩文件对象的名字为空，就认为是损坏或不支持的文件或文件路径，跳过解压
                         if (string.IsNullOrEmpty(currentEntry.Name))
@@ -307,7 +303,7 @@ namespace Util.IO
                             using (FileStream fileStream = File.Create(fullEntryToPath))
                             {
                                 //定义一个变量存放实际从压缩文件流内读取到的文件数据量
-                                int readNum=0;
+                                int readNum = 0;
                                 //定义一个变量存放已读取的文件总数据量
                                 uint totalReadSize = 0;
                                 //定义一个1k的数据包
@@ -322,7 +318,7 @@ namespace Util.IO
                                     OnDeCompress?.Invoke(fullEntryToPath, totalReadSize, currentEntry.Size, false);
                                     //输出文件数据到解压后的文件
                                     fileStream.WriteAsync(readDataBytes, 0, readNum).Wait();
-                                } while (readNum >0);
+                                } while (readNum > 0);
                             }
                         }
                     }

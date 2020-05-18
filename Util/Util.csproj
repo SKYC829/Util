@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Util.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -60,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Common\DeviceUtil.cs" />
     <Compile Include="Common\QrCodeUtil.cs" />
+    <Compile Include="Common\RandomUtil.cs" />
     <Compile Include="Common\ReferenceUtil.cs" />
     <Compile Include="Common\SerializeUtil_Binary.cs" />
     <Compile Include="Common\SerializeUtil_Json.cs" />
@@ -76,9 +78,9 @@
     <Compile Include="IO\EncryptionUtil.cs" />
     <Compile Include="IO\FileUtil.cs" />
     <Compile Include="IO\Log\LogDate.cs" />
-    <Compile Include="IO\Log\LogUtil.cs" />
     <Compile Include="IO\Log\LogInfo.cs" />
     <Compile Include="IO\Log\LogType.cs" />
+    <Compile Include="IO\Log\LogUtil.cs" />
     <Compile Include="IO\RegularUtil.cs" />
     <Compile Include="IO\XmlUtil.cs" />
     <Compile Include="Net\NetUtil.cs" />

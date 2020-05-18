@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Util.IO.Log;
 
@@ -74,7 +70,7 @@ namespace Util.Common
         /// <returns></returns>
         public static object FromXml(byte[] fromBytes)
         {
-            if(fromBytes == null || fromBytes.Length <= 0)
+            if (fromBytes == null || fromBytes.Length <= 0)
             {
                 return null;
             }
@@ -118,7 +114,7 @@ namespace Util.Common
         /// <returns></returns>
         public static T FromXml<T>(byte[] fromBytes)
         {
-            if(fromBytes == null || fromBytes.Length <= 0)
+            if (fromBytes == null || fromBytes.Length <= 0)
             {
                 return default(T);
             }
@@ -144,7 +140,8 @@ namespace Util.Common
             {
                 //反序列化数据流
                 result = (T)serializer.Deserialize(fromStream);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //如果发生错误则序列化失败
                 LogUtil.WriteException(ex.ToString());

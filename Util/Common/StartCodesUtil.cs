@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Util.Common
 {
@@ -38,7 +35,7 @@ namespace Util.Common
         /// </summary>
         public StartCodesUtil()
         {
-            if(executeCodes == null)
+            if (executeCodes == null)
             {
                 executeCodes = new List<SimpleDelegateCode>();
             }
@@ -50,7 +47,7 @@ namespace Util.Common
         public void Execute()
         {
             //只要要执行的方法列表中还有元素,就循环执行
-            while (executeCodes.Count>0)
+            while (executeCodes.Count > 0)
             {
                 //如果被标识为终止,则跳出循环
                 if (IsBreak)
@@ -112,7 +109,7 @@ namespace Util.Common
         /// </summary>
         /// <param name="codeIndex">方法要放至的元素位置</param>
         /// <param name="executeCode">待执行的方法</param>
-        public void Insert(int codeIndex,SimpleDelegateCode executeCode)
+        public void Insert(int codeIndex, SimpleDelegateCode executeCode)
         {
             //锁住要执行的方法列表,防止在向要执行的方法列表中插入方法,并放到指定位置时有新元素插入或移除,导致执行顺序错误
             lock (executeCodes)
