@@ -5,12 +5,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Util.Common;
 using Util.DataObject;
@@ -28,7 +25,6 @@ namespace Util
         /// <summary>
         /// 将一个对象转换为键值对
         /// </summary>
-        /// <typeparam name="M">键值对值的类型</typeparam>
         /// <param name="from">要转换的物体</param>
         /// <returns></returns>
         public static IDictionary ToDictionary(this object from)
@@ -85,11 +81,11 @@ namespace Util
         /// </summary>
         /// <param name="from">要转换的DataRow</param>
         /// <returns></returns>
-        public static Dictionary<string,object> ToDictionary(this DataRow from)
+        public static Dictionary<string, object> ToDictionary(this DataRow from)
         {
             //初始化返回值
             Dictionary<string, object> result = new Dictionary<string, object>();
-            if(from != null)
+            if (from != null)
             {
                 //遍历数据行所属的表的所有字段
                 foreach (DataColumn dataColumn in from.Table.Columns)
@@ -106,7 +102,7 @@ namespace Util
         /// </summary>
         /// <param name="from">要转换的DataTable</param>
         /// <returns></returns>
-        public static List<Dictionary<string,object>> ToDictionary(this DataTable from)
+        public static List<Dictionary<string, object>> ToDictionary(this DataTable from)
         {
             return ToDictionary(from.Rows.Cast<DataRow>().ToArray());
         }
@@ -116,7 +112,7 @@ namespace Util
         /// </summary>
         /// <param name="froms">要转换的DataRow数组</param>
         /// <returns></returns>
-        public static List<Dictionary<string,object>> ToDictionary(this IEnumerable<DataRow> froms)
+        public static List<Dictionary<string, object>> ToDictionary(this IEnumerable<DataRow> froms)
         {
             //初始化返回值
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
@@ -167,7 +163,8 @@ namespace Util
                         result = startTime.AddSeconds(timeStampValue);
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //发生异常则认为不是时间戳格式，无法转换
                 LogUtil.WriteException(ex.ToString());
@@ -189,12 +186,13 @@ namespace Util
                 if (!string.IsNullOrEmpty(timeStr))
                 {
                     //尝试将字符串转换为日期时间格式
-                    if(DateTime.TryParse(timeStr,out DateTime dateTimeValue))
+                    if (DateTime.TryParse(timeStr, out DateTime dateTimeValue))
                     {
                         result = dateTimeValue;
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //发生异常则认为不是日期时间格式，无法转换
                 LogUtil.WriteException(ex.ToString());
@@ -207,10 +205,10 @@ namespace Util
         /// </summary>
         /// <param name="from">要添加字段的数据表</param>
         /// <param name="columns">要添加的字段的合集</param>
-        public static void AddColumn(this DataTable from,params string[] columns)
+        public static void AddColumn(this DataTable from, params string[] columns)
         {
             //如果来源数据表为空或要添加的字段集合为空则直接返回
-            if(from == null || columns == null)
+            if (from == null || columns == null)
             {
                 return;
             }
@@ -230,13 +228,13 @@ namespace Util
         /// </summary>
         /// <param name="from">要添加字段的数据表</param>
         /// <param name="fromType">要反射添加字段的对象类型</param>
-        public static void AddColumn(this DataTable from,Type fromType)
+        public static void AddColumn(this DataTable from, Type fromType)
         {
             //反射遍历目标类型的所有属性
             foreach (PropertyInfo property in fromType.GetProperties())
             {
                 //如果该属性能够读写，则添加到数据表中
-                if(property.CanRead && property.CanWrite)
+                if (property.CanRead && property.CanWrite)
                 {
                     from.AddColumn(property.Name, property.PropertyType);
                 }
@@ -255,7 +253,7 @@ namespace Util
         /// <param name="from">要添加字段的数据表</param>
         /// <param name="columnName">要添加的字段</param>
         /// <param name="columnType">要添加的字段的类型</param>
-        public static void AddColumn(this DataTable from,string columnName,Type columnType)
+        public static void AddColumn(this DataTable from, string columnName, Type columnType)
         {
             //如果数据表中已经有这个字段了，就直接返回
             if (from.Columns.Contains(columnName))
@@ -311,7 +309,7 @@ namespace Util
         /// </summary>
         /// <param name="fromDataRow">来源数据行</param>
         /// <param name="toDataRow">要复制的数据行</param>
-        public static void CopyTo(this DataRow fromDataRow,DataRow toDataRow)
+        public static void CopyTo(this DataRow fromDataRow, DataRow toDataRow)
         {
             //得到来源数据表
             DataTable fromTable = fromDataRow.Table;
@@ -321,7 +319,7 @@ namespace Util
             foreach (DataColumn column in fromTable.Columns)
             {
                 //给目标数据表增加相应的列
-                toTable.AddColumn(column.ColumnName,column.DataType);
+                toTable.AddColumn(column.ColumnName, column.DataType);
                 //取出刚刚增加的那一列
                 DataColumn toColumn = toTable.Columns[column.ColumnName];
                 //对目标数据行进行赋值
@@ -361,7 +359,7 @@ namespace Util
         /// <param name="privateKey">私钥</param>
         /// <param name="publicKey">公钥</param>
         /// <returns></returns>
-        public static string EncryptAES(this object content, string privateKey="", string publicKey="")
+        public static string EncryptAES(this object content, string privateKey = "", string publicKey = "")
         {
             return EncryptionUtil.EncryptAES(content, privateKey, publicKey);
         }
@@ -376,7 +374,7 @@ namespace Util
         /// <param name="privateKey">私钥</param>
         /// <param name="publicKey">公钥</param>
         /// <returns></returns>
-        public static T DeEncryptAES<T>(this string content, string privateKey="", string publicKey="")
+        public static T DeEncryptAES<T>(this string content, string privateKey = "", string publicKey = "")
         {
             return EncryptionUtil.DeEncryptAES<T>(content, privateKey, publicKey);
         }
@@ -447,7 +445,8 @@ namespace Util
                     }
                     result = resultStream.ToArray();
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //如果发生异常就认为压缩失败，返回原字节流数据
                 LogUtil.WriteException(ex.ToString());
@@ -480,7 +479,7 @@ namespace Util
                             //定义一个变量用来存储每次实际读取到的数据的数量
                             int count;
                             //如果读取到的数据的数量不是0，就将读取到的数据写入到存放压缩后的数据的内存流中
-                            while ((count = gZip.Read(zipDataBytes, 0, zipDataBytes.Length))!=0)
+                            while ((count = gZip.Read(zipDataBytes, 0, zipDataBytes.Length)) != 0)
                             {
                                 //写入数据到存放压缩后的数据的内存流中
                                 resultStream.Write(zipDataBytes, 0, count);
@@ -489,7 +488,8 @@ namespace Util
                         }
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 LogUtil.WriteException(ex.ToString());
             }
@@ -526,7 +526,7 @@ namespace Util
         public static string ParseUrl(this string from, bool isHttpUrl)
         {
             //如果传入的字符串已~或.开头，对字符串开头进行裁剪
-            if(from.StartsWith("~") || from.StartsWith("."))
+            if (from.StartsWith("~") || from.StartsWith("."))
             {
                 from = from.TrimStart(new char[]
                 {
@@ -549,7 +549,7 @@ namespace Util
             //将网络路径的标志'/'转换为Windows特识别的本地路径的'\'标志
             from = from.Replace('/', '\\');
             //如果获取不到':'的位置，说明传入的字符串没有做开头裁剪处理，即没有盘符或http的物理路径
-            if(from.IndexOf(':') == -1)
+            if (from.IndexOf(':') == -1)
             {
                 //那么就默认以本地路径处理
                 from = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, from);
@@ -572,7 +572,7 @@ namespace Util
         /// </summary>
         /// <param name="fromDirectory">要复制的文件夹</param>
         /// <param name="toPath">文件夹的新路径</param>
-        public static void CopyTo(this DirectoryInfo fromDirectory,string toPath)
+        public static void CopyTo(this DirectoryInfo fromDirectory, string toPath)
         {
             fromDirectory.CopyTo(toPath, true);
         }
@@ -583,10 +583,10 @@ namespace Util
         /// <param name="fromDirectory">要复制的文件夹</param>
         /// <param name="toPath">文件夹的新路径</param>
         /// <param name="isRecursive">是否复制该文件夹下的子文件夹</param>
-        public static void CopyTo(this DirectoryInfo fromDirectory,string toPath,bool isRecursive)
+        public static void CopyTo(this DirectoryInfo fromDirectory, string toPath, bool isRecursive)
         {
             //如果要复制的文件夹不存在，就取消操作
-            if ( fromDirectory == null || !fromDirectory.Exists)
+            if (fromDirectory == null || !fromDirectory.Exists)
             {
                 return;
             }
@@ -606,7 +606,7 @@ namespace Util
                         file.CopyTo(Path.Combine(toPath, file.Name), true);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogUtil.WriteException(ex.ToString());
                 }
@@ -619,9 +619,39 @@ namespace Util
                 //重新递归调用此方法复制
                 foreach (DirectoryInfo subDirectory in subDirectorys)
                 {
-                    subDirectory.CopyTo(Path.Combine(toPath, subDirectory.Name),isRecursive);
+                    subDirectory.CopyTo(Path.Combine(toPath, subDirectory.Name), isRecursive);
                 }
             }
+        }
+
+        /// <summary>
+        /// 根据键值对的值进行排序
+        /// </summary>
+        /// <typeparam name="T1">键的类型</typeparam>
+        /// <typeparam name="T2">值的类型</typeparam>
+        /// <param name="fromDictionary">要排序的键值对</param>
+        /// <returns></returns>
+        public static IList<KeyValuePair<T1, T2>> Sort<T1, T2>(this IDictionary<T1, T2> fromDictionary) where T2 : struct
+        {
+            List<KeyValuePair<T1, T2>> result = new List<KeyValuePair<T1, T2>>();
+            if (fromDictionary != null)
+            {
+                result.AddRange(fromDictionary);
+                try
+                {
+                    result.Sort(delegate (KeyValuePair<T1, T2> previewItem, KeyValuePair<T1, T2> nextItem)
+                    {
+                        dynamic value1 = previewItem;
+                        dynamic value2 = nextItem;
+                        return value2 - value1;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    LogUtil.WriteException(ex.ToString());
+                }
+            }
+            return result;
         }
     }
 }
