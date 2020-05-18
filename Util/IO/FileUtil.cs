@@ -1,11 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.IO
@@ -22,6 +19,14 @@ namespace Util.IO
         public static string ApplicationPath
         {
             get { return AppDomain.CurrentDomain.BaseDirectory; }
+        }
+
+        /// <summary>
+        /// 获取应用程序的友好名称
+        /// </summary>
+        public static string ApplicationName
+        {
+            get { return AppDomain.CurrentDomain.FriendlyName; }
         }
 
         /// <summary>
@@ -82,9 +87,9 @@ namespace Util.IO
         /// </param>
         /// <param name="defaultExtension">默认文件后缀</param>
         /// <returns></returns>
-        public static string ShowSaveFileDialog(string fileName,string extensionFilter,string defaultExtension)
+        public static string ShowSaveFileDialog(string fileName, string extensionFilter, string defaultExtension)
         {
-            return ShowSaveFileDialog(fileName, extensionFilter, defaultExtension,null);
+            return ShowSaveFileDialog(fileName, extensionFilter, defaultExtension, null);
         }
 
         /// <summary>
@@ -98,7 +103,7 @@ namespace Util.IO
         /// <param name="defaultExtension">默认文件后缀</param>
         /// <param name="onSave">在保存时要执行的委托方法</param>
         /// <returns></returns>
-        public static string ShowSaveFileDialog(string fileName,string extensionFilter,string defaultExtension,SimpleDelegateCode onSave)
+        public static string ShowSaveFileDialog(string fileName, string extensionFilter, string defaultExtension, SimpleDelegateCode onSave)
         {
             //初始化返回值
             string result = string.Empty;
@@ -131,7 +136,7 @@ namespace Util.IO
         /// <para>所有文件(*.*)|*.*</para>
         /// </param>
         /// <returns></returns>
-        public static string ShowOpenFileDialog(string rootPath,string extensionFilter)
+        public static string ShowOpenFileDialog(string rootPath, string extensionFilter)
         {
             return ShowOpenFileDialog(rootPath, extensionFilter, onOpen: null);
         }
@@ -146,7 +151,7 @@ namespace Util.IO
         /// </param>
         /// <param name="onOpen">在打开时要执行的委托方法</param>
         /// <returns></returns>
-        public static string ShowOpenFileDialog(string rootPath,string extensionFilter,SimpleDelegateCode onOpen)
+        public static string ShowOpenFileDialog(string rootPath, string extensionFilter, SimpleDelegateCode onOpen)
         {
             return ShowOpenFileDialog(rootPath, extensionFilter, false, onOpen).FirstOrDefault();
         }
@@ -161,7 +166,7 @@ namespace Util.IO
         /// </param>
         /// <param name="canMulti">是否允许多选</param>
         /// <returns></returns>
-        public static string[] ShowOpenFileDialog(string rootPath,string extensionFilter,bool canMulti)
+        public static string[] ShowOpenFileDialog(string rootPath, string extensionFilter, bool canMulti)
         {
             return ShowOpenFileDialog(rootPath, extensionFilter, canMulti, null);
         }
@@ -177,7 +182,7 @@ namespace Util.IO
         /// <param name="canMulti">是否允许多选</param>
         /// <param name="onOpen">在打开时要执行的委托方法</param>
         /// <returns></returns>
-        public static string[] ShowOpenFileDialog(string rootPath,string extensionFilter, bool canMulti, SimpleDelegateCode onOpen)
+        public static string[] ShowOpenFileDialog(string rootPath, string extensionFilter, bool canMulti, SimpleDelegateCode onOpen)
         {
             //初始化返回值
             List<string> results = new List<string>();
@@ -229,7 +234,7 @@ namespace Util.IO
             try
             {
                 //通过文件流打开读取文件，如果能打开读取，就认为没被占用
-                using (FileStream fileStream = new FileStream(fileInfo.FullName,FileMode.Open,FileAccess.Read,FileShare.None))
+                using (FileStream fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     result = false;
                 }
@@ -279,7 +284,7 @@ namespace Util.IO
                     return result;
                 }
                 //用文件流打开文件，读取出所有数据
-                using (FileStream fileStream = new FileStream(fileInfo.FullName,FileMode.Open,FileAccess.Read,FileShare.None))
+                using (FileStream fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     //定义一个数据包，用于存放文件数据
                     byte[] readFileDataBytes = new byte[fileInfo.Length];
@@ -289,7 +294,7 @@ namespace Util.IO
                     result = readFileDataBytes.EncryptMD5();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //如果发生仍和异常就认为加密失败
                 LogUtil.WriteException(ex.ToString());
@@ -303,7 +308,7 @@ namespace Util.IO
         /// <param name="fromFilePath">要对比的文件1的路径</param>
         /// <param name="toFilePath">要对比的文件2的路径</param>
         /// <returns></returns>
-        public static bool VerifyFileMD5(string fromFilePath,string toFilePath)
+        public static bool VerifyFileMD5(string fromFilePath, string toFilePath)
         {
             return VerifyFileMD5(new FileInfo(fromFilePath), new FileInfo(toFilePath));
         }
@@ -314,7 +319,7 @@ namespace Util.IO
         /// <param name="fromFileInfo">要对比的文件1的信息</param>
         /// <param name="toFileInfo">要对比的文件2的信息</param>
         /// <returns></returns>
-        public static bool VerifyFileMD5(FileInfo fromFileInfo,FileInfo toFileInfo)
+        public static bool VerifyFileMD5(FileInfo fromFileInfo, FileInfo toFileInfo)
         {
             return VerifyMD5(GetFileMD5(fromFileInfo), GetFileMD5(toFileInfo));
         }
@@ -325,7 +330,7 @@ namespace Util.IO
         /// <param name="fromMD5Bytes">要对比的二进制数组1</param>
         /// <param name="toMD5Bytes">要对比的二进制数组2</param>
         /// <returns></returns>
-        public static bool VerifyMD5(byte[] fromMD5Bytes,byte[] toMD5Bytes)
+        public static bool VerifyMD5(byte[] fromMD5Bytes, byte[] toMD5Bytes)
         {
             return VerifyMD5(fromMD5Bytes.EncryptMD5(), toMD5Bytes.EncryptMD5());
         }
@@ -336,7 +341,7 @@ namespace Util.IO
         /// <param name="fromMD5">要对比的MD51</param>
         /// <param name="toMD5">要对比的MD52</param>
         /// <returns></returns>
-        internal static bool VerifyMD5(string fromMD5,string toMD5)
+        internal static bool VerifyMD5(string fromMD5, string toMD5)
         {
             return !string.IsNullOrEmpty(fromMD5)
                 && !string.IsNullOrEmpty(toMD5)
