@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Util.Common
 {
+    /// <summary>
+    /// 反射帮助类
+    /// <para>可以快速获取一些程序集和类型</para>
+    /// <para>也可以快速创建类型</para>
+    /// </summary>
     public class ReferenceUtil
     {
         /// <summary>
@@ -36,7 +39,7 @@ namespace Util.Common
             //尝试加载程序集
             Assembly result = Assembly.Load(assemblyName);
             //如果结果为空，就认为程序集不存在
-            if(result == null)
+            if (result == null)
             {
                 throw new FileNotFoundException(string.Format("命名空间[{0}]不存在！", assemblyName));
             }
@@ -112,7 +115,7 @@ namespace Util.Common
         /// <param name="assembly">程序集</param>
         /// <param name="typeName">类型名称</param>
         /// <returns></returns>
-        public static Type GetType(Assembly assembly,string typeName)
+        public static Type GetType(Assembly assembly, string typeName)
         {
             //初始化返回值
             Type result = null;
@@ -130,8 +133,8 @@ namespace Util.Common
                 //SubDir.ClassName这样的，而传入的却是ClassName
                 //这时候GetType就会无法识别到SubDir，就会导致报错类型不存在，但其实是存在的
                 //用GetTypes可以返回所有文件夹下的ClassName,然后再进行对比则可以消除这个误差
-                result = assembly.GetTypes().FirstOrDefault(p => p.FullName == typeName);
-                if(result == null)
+                result = assembly.GetTypes().FirstOrDefault(p => p.FullName == typeName || p.Name == typeName);
+                if (result == null)
                 {
                     throw new EntryPointNotFoundException(string.Format("程序集[{0}]中不存在类[{1}]！", assembly.FullName, typeName));
                 }
@@ -190,7 +193,7 @@ namespace Util.Common
         /// <param name="className">类型名称</param>
         /// <param name="paras">构造函数所需要的参数</param>
         /// <returns></returns>
-        public static object Get(string className,params object[] paras)
+        public static object Get(string className, params object[] paras)
         {
             return Get<object>(className, paras);
         }
@@ -202,14 +205,14 @@ namespace Util.Common
         /// <param name="className">类型名称</param>
         /// <param name="paras">构造函数所需要的参数</param>
         /// <returns></returns>
-        public static T Get<T>(string className,params object[] paras) where T:class
+        public static T Get<T>(string className, params object[] paras) where T : class
         {
             //初始化返回值
             T result = default(T);
             //获取类型
             Type classType = GetType(className);
             //如果获取不到这个类型，就返回实例类型的默认值，一般情况下是Null
-            if(classType == null)
+            if (classType == null)
             {
                 return result;
             }
@@ -218,7 +221,7 @@ namespace Util.Common
             for (int i = 0; i < paras.Length; i++)
             {
                 object param = paras[i];
-                if(param == null)
+                if (param == null)
                 {
                     throw new ArgumentNullException("利用构造函数生成类时，参数不能为Null！", nameof(param));
                 }
