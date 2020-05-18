@@ -7,7 +7,6 @@
 ## 说明
 ```
 1.此项目封装了一些帮助类，便于平常开发时直接调用。
-2.因为名称冲突问题，Log相关的代码没有提交上来，然后我的VPN还过期了，5月内暂时无法提交，等到6月VPN续上以后将会把没提交成功的代码补齐上来。
 ```
 
 -----
@@ -21,6 +20,10 @@
 	1.3 SerializeUtil (Finished)
 	
 	1.4 StartCodesUtil (Finished)
+	
+	1.5 RandomUtil (Finished)
+	
+	1.6 ReferenceUtil (Finished)
 	
 2. DataObject
 
