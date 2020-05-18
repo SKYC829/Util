@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Util.IO.Log;
 
 namespace Util.DataObject
@@ -22,20 +17,20 @@ namespace Util.DataObject
         /// <param name="type">要比较的类型</param>
         /// <param name="typeName">要比较的类型的名字</param>
         /// <returns></returns>
-        internal static bool CompareType(Type type,string typeName)
+        internal static bool CompareType(Type type, string typeName)
         {
             //如果要比较的类型为空，就认为不一致，返回false
-            if(type == null)
+            if (type == null)
             {
                 return false;
             }
             //否则要比较的类型和类型名称一致，就返回true
-            else if(type.ToString() == typeName)
+            else if (type.ToString() == typeName)
             {
                 return true;
             }
             //如果类型名字为System.Object，说明比较到最基础的类了还没有一致的，返回false
-            if(type.ToString() == "System.Object")
+            if (type.ToString() == "System.Object")
             {
                 return false;
             }
@@ -52,7 +47,7 @@ namespace Util.DataObject
         /// <param name="type1">要比较的类型1</param>
         /// <param name="type2">要比较的类型2</param>
         /// <returns></returns>
-        internal static bool CompareType(Type type1,Type type2)
+        internal static bool CompareType(Type type1, Type type2)
         {
             return CompareType(type1, type2.ToString());
         }
@@ -64,17 +59,17 @@ namespace Util.DataObject
         /// <param name="value2">要比较的对象2</param>
         /// <param name="ignoreCase">是否忽略大小写</param>
         /// <returns></returns>
-        public static bool SafeCompare(object value1,object value2,bool ignoreCase)
+        public static bool SafeCompare(object value1, object value2, bool ignoreCase)
         {
             //初始化两个变量用于接收要比较的对象的字符串形式
             string fromValue1 = string.Empty;
             string fromValue2 = string.Empty;
             //将要比较的对象转换为字符串
-            if(value1 != null)
+            if (value1 != null)
             {
                 fromValue1 = value1.ToString();
             }
-            if(value2 != null)
+            if (value2 != null)
             {
                 fromValue2 = value2.ToString();
             }
@@ -89,7 +84,7 @@ namespace Util.DataObject
         /// <param name="value2">要比较的字符串2</param>
         /// <param name="ignoreCase">是否忽略大小写</param>
         /// <returns></returns>
-        public static bool SafeCompare(string value1,string value2,bool ignoreCase)
+        public static bool SafeCompare(string value1, string value2, bool ignoreCase)
         {
             return !string.IsNullOrEmpty(value1) && !string.IsNullOrEmpty(value2) //如果两个字符串都不是空
                 && value1.Length == value2.Length //并且两个字符串长度相等
@@ -121,7 +116,7 @@ namespace Util.DataObject
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>
-        internal static bool IsEmpty(object from)
+        public static bool IsEmpty(object from)
         {
             //from不是空且不是string.empty且不是\0，则返回true
             return from == null || string.IsNullOrEmpty(from.ToString()) || string.IsNullOrWhiteSpace(from.ToString());
@@ -156,7 +151,7 @@ namespace Util.DataObject
         /// <param name="from">要转换的对象</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static bool GetBoolean(object from,bool defaultValue)
+        public static bool GetBoolean(object from, bool defaultValue)
         {
             //初始化返回值
             bool result = defaultValue;
@@ -164,14 +159,15 @@ namespace Util.DataObject
             {
                 if (!IsEmpty(from))
                 {
-                    result = (    !SafeCompare(from, "0", true) //来源对象不等于0
+                    result = (!SafeCompare(from, "0", true) //来源对象不等于0
                                && !SafeCompare(from, "false", true) //且来源对象不等于false
                                && !SafeCompare(from, "f", true) //且来源对象不等于f
                                && !SafeCompare(from, "no", true) //且来源对象不等于no
                                && !SafeCompare(from, "n", true) //且来源对象不等于n
                                && !IsEmpty(from)); //且来源对象不是空
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //发生异常则认为无法转换
                 LogUtil.WriteException(ex.ToString());
@@ -196,7 +192,8 @@ namespace Util.DataObject
                     //将对象转换为int类型
                     result = Convert.ToInt32(from);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 LogUtil.WriteException(ex.ToString());
             }
@@ -214,17 +211,17 @@ namespace Util.DataObject
             //初始化返回值
             DateTime? result = null;
             //如果来源对象已经是DateTime类型了，直接强制转换即可
-            if(from is DateTime)
+            if (from is DateTime)
             {
                 result = (DateTime)from;
             }
             //如果来源对象是可空的DateTime类型(DateTime?)，也强制转换即可
-            else if(from is DateTime?)
+            else if (from is DateTime?)
             {
                 result = (DateTime?)from;
             }
             //如果到这返回值还是空，说明来源对象不是DateTime和DateTime?类型，则需要先转为字符串再进行转换
-            if(result == null)
+            if (result == null)
             {
                 //将来源对象转换为字符串
                 string fromStr = GetString(from);
@@ -255,7 +252,8 @@ namespace Util.DataObject
                     //将对象转换为Double类型
                     result = Convert.ToDouble(from);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //如果发生异常则认为转换失败
                 LogUtil.WriteException(ex.ToString());
@@ -280,7 +278,8 @@ namespace Util.DataObject
                     //将对象转换为Decimal形式
                     from = Convert.ToDecimal(from);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //如果发生异常就认为无法转换
                 LogUtil.WriteException(ex.ToString());
@@ -294,7 +293,7 @@ namespace Util.DataObject
         /// <param name="toType">要转换的类型</param>
         /// <param name="from">要转换的对象</param>
         /// <returns></returns>
-        public static object Get(Type toType,object from)
+        public static object Get(Type toType, object from)
         {
             //初始化返回值
             object result;
