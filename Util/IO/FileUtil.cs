@@ -445,7 +445,13 @@ namespace Util.IO
             //设置快捷方式的备注
             wshShortcut.Description = fileDescription;
             //设置快捷方式的图标
-            wshShortcut.IconLocation = string.Format("{0},0", fileInfo.FullName);
+            string iconLocation = string.Format("{0},0", fileInfo.FullName);
+            //如果目标路径是文件夹，那么把图标改为文件夹的图标，不然的话快捷方式的图标是白色的，影响美观
+            if (IsDirectory(fileInfo.FullName))
+            {
+                iconLocation = string.Format("{0},110", @"%SystemRoot%\System32\SHELL32.dll");
+            }
+            wshShortcut.IconLocation = iconLocation;
             //设置快捷方式的起始位置
             wshShortcut.WorkingDirectory = Path.GetDirectoryName(fileInfo.FullName);
             //保存输出快捷方式文件
