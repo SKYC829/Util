@@ -653,5 +653,25 @@ namespace Util
             }
             return result;
         }
+
+        /// <summary>
+        /// 创建快捷方式
+        /// </summary>
+        /// <param name="application">要创建快捷方式的程序域</param>
+        public static void CreateShortcut(this AppDomain application)
+        {
+            CreateShortcut(application, string.Empty);
+        }
+
+        /// <summary>
+        /// 创建快捷方式
+        /// </summary>
+        /// <param name="application">要创建快捷方式的程序域</param>
+        /// <param name="description">快捷方式的备注</param>
+        /// <param name="args">快捷方式要传给程序的参数</param>
+        public static void CreateShortcut(this AppDomain application,string description,params object[] args)
+        {
+            FileUtil.CreateShortcut(Path.Combine(application.BaseDirectory, application.FriendlyName), description, args);
+        }
     }
 }

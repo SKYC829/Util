@@ -1,9 +1,15 @@
-﻿using Microsoft.Win32;
+﻿using IWshRuntimeLibrary;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security;
+using Util.Common;
+using Util.DataObject;
 using Util.IO.Log;
+using File = System.IO.File;
 
 namespace Util.IO
 {
@@ -37,7 +43,7 @@ namespace Util.IO
         public static bool IsDirectory(string fromPath)
         {
             //如果能获取到路径指向的文件或文件夹的扩展名，就认为是文件，否则是文件夹
-            return Path.GetExtension(fromPath) == null;
+            return  StringUtil.IsEmpty(Path.GetExtension(fromPath));
         }
 
         /// <summary>
@@ -346,6 +352,96 @@ namespace Util.IO
             return !string.IsNullOrEmpty(fromMD5)
                 && !string.IsNullOrEmpty(toMD5)
                 && fromMD5 == toMD5;
+        }
+
+        /// <summary>
+        /// 创建快捷方式
+        /// </summary>
+        /// <param name="filePath">要创建快捷方式的文件</param>
+        /// <param name="fileDescription">要写在快捷方式内的描述</param>
+        /// <param name="args">快捷方式要传给程序的参数</param>
+        public static void CreateShortcut(string filePath,string fileDescription,params object[] args)
+        {
+            try
+            {
+                InternalCreateShortcut(filePath, fileDescription, args);
+            }
+            catch(Exception ex)
+            {
+                LogUtil.WriteException(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 创建快捷方式
+        /// </summary>
+        /// <param name="filePath">要创建快捷方式的文件或文件夹</param>
+        /// <param name="fileDescription">要写在快捷方式内的描述</param>
+        /// <param name="args">快捷方式要传给程序的参数</param>
+        internal static void InternalCreateShortcut(string filePath, string fileDescription, params object[] args)
+        {
+            //获取桌面的文件夹
+            string desktopPath = DeviceUtil.GetSpecialFolder(Environment.SpecialFolder.Desktop);
+            //检查要创建快捷方式的文件是否存在
+            FileInfo fileInfo = new FileInfo(filePath);
+            if (!IsDirectory(fileInfo.FullName) && !fileInfo.Exists)
+            {
+                throw new FileNotFoundException("要创建快捷方式的文件不存在！");
+            }
+            //获取快捷方式的完整路径和文件名
+            string shortcutName = string.Empty;
+            //如果要创建快捷方式的文件是文件夹
+            if (IsDirectory(fileInfo.FullName))
+            {
+                //获取当前应用程序名称的后缀名
+                string appExtension = Path.GetExtension(ApplicationName);
+                //将当前应用程序的名称作为快捷方式的名称
+                shortcutName = Path.Combine(desktopPath, ApplicationName.Replace(appExtension, ".lnk"));
+            }
+            else
+            {
+                shortcutName = Path.Combine(desktopPath, fileInfo.Name.Replace(fileInfo.Extension, ".lnk"));
+            }
+            //声明一个WshShell控制台
+            WshShell wshShell = new WshShell();
+            //通过WshShell控制台创建快捷方式对象
+            IWshShortcut wshShortcut = null;
+            try
+            {
+                //创建快捷方式对象
+                wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutName);
+            }
+            catch (Exception ex)
+            {
+                //错误码0x80020009:快捷方式后缀名必须是.lnk,提示这个错误是指快捷方式后缀名错误
+                if(StringUtil.GetInt(ex.HResult.ToString("x2")) == 80020009)
+                {
+                    //给快捷方式完整路径和文件名加上lnk文件后缀
+                    shortcutName = string.Format("{0}.lnk", shortcutName);
+                    //重新创建快捷方式对象
+                    wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutName);
+                }
+                else
+                {
+                    //如果是其他错误就抛出，将错误信息记录到日志里
+                    throw;
+                }
+            }
+            //设置快捷方式的目标路径(打开文件所在的位置时跳转的路径)
+            wshShortcut.TargetPath = fileInfo.FullName;
+            //如果快捷方式要传给程序的参数不为空，就将快捷方式要传给程序的参数按空格分割，再以，进行组合成一个字符串
+            if (args != null && args.Length > 0)
+            {
+                wshShortcut.Arguments = string.Join(",", args);
+            }
+            //设置快捷方式的备注
+            wshShortcut.Description = fileDescription;
+            //设置快捷方式的图标
+            wshShortcut.IconLocation = string.Format("{0},0", fileInfo.FullName);
+            //设置快捷方式的起始位置
+            wshShortcut.WorkingDirectory = Path.GetDirectoryName(fileInfo.FullName);
+            //保存输出快捷方式文件
+            wshShortcut.Save();
         }
     }
 }
