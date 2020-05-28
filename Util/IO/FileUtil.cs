@@ -355,14 +355,15 @@ namespace Util.IO
         /// <summary>
         /// 创建快捷方式
         /// </summary>
+        /// <param name="shortcutName">快捷方式文件的名称</param>
         /// <param name="filePath">要创建快捷方式的文件</param>
         /// <param name="fileDescription">要写在快捷方式内的描述</param>
         /// <param name="args">快捷方式要传给程序的参数</param>
-        public static void CreateShortcut(string filePath, string fileDescription, params object[] args)
+        public static void CreateShortcut(string shortcutName, string filePath, string fileDescription, params object[] args)
         {
             try
             {
-                InternalCreateShortcut(filePath, fileDescription, args);
+                InternalCreateShortcut(shortcutName, filePath, fileDescription, args);
             }
             catch (Exception ex)
             {
@@ -373,10 +374,11 @@ namespace Util.IO
         /// <summary>
         /// 创建快捷方式
         /// </summary>
+        /// <param name="shortcutName">快捷方式文件的名称</param>
         /// <param name="filePath">要创建快捷方式的文件或文件夹</param>
         /// <param name="fileDescription">要写在快捷方式内的描述</param>
         /// <param name="args">快捷方式要传给程序的参数</param>
-        internal static void InternalCreateShortcut(string filePath, string fileDescription, params object[] args)
+        internal static void InternalCreateShortcut(string shortcutName, string filePath, string fileDescription, params object[] args)
         {
             //获取桌面的文件夹
             string desktopPath = DeviceUtil.GetSpecialFolder(Environment.SpecialFolder.Desktop);
@@ -387,18 +389,26 @@ namespace Util.IO
                 throw new FileNotFoundException("要创建快捷方式的文件不存在！");
             }
             //获取快捷方式的完整路径和文件名
-            string shortcutName = string.Empty;
-            //如果要创建快捷方式的文件是文件夹
-            if (IsDirectory(fileInfo.FullName))
+            string shortcutFullName = string.Empty;
+            //如果没有设置快捷方式文件的名称，就生成一个名称
+            if (StringUtil.IsEmpty(shortcutName))
             {
-                //获取当前应用程序名称的后缀名
-                string appExtension = Path.GetExtension(ApplicationName);
-                //将当前应用程序的名称作为快捷方式的名称
-                shortcutName = Path.Combine(desktopPath, ApplicationName.Replace(appExtension, ".lnk"));
+                //如果要创建快捷方式的文件是文件夹
+                if (IsDirectory(fileInfo.FullName))
+                {
+                    //获取当前应用程序名称的后缀名
+                    string appExtension = Path.GetExtension(ApplicationName);
+                    //将当前应用程序的名称作为快捷方式的名称
+                    shortcutFullName = Path.Combine(desktopPath, ApplicationName.Replace(appExtension, ".lnk"));
+                }
+                else
+                {
+                    shortcutFullName = Path.Combine(desktopPath, fileInfo.Name.Replace(fileInfo.Extension, ".lnk"));
+                }
             }
             else
             {
-                shortcutName = Path.Combine(desktopPath, fileInfo.Name.Replace(fileInfo.Extension, ".lnk"));
+                shortcutFullName = Path.Combine(desktopPath, string.Format("{0}.lnk", shortcutName));
             }
             //声明一个WshShell控制台
             WshShell wshShell = new WshShell();
@@ -407,7 +417,7 @@ namespace Util.IO
             try
             {
                 //创建快捷方式对象
-                wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutName);
+                wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutFullName);
             }
             catch (Exception ex)
             {
@@ -415,9 +425,9 @@ namespace Util.IO
                 if (StringUtil.GetInt(ex.HResult.ToString("x2")) == 80020009)
                 {
                     //给快捷方式完整路径和文件名加上lnk文件后缀
-                    shortcutName = string.Format("{0}.lnk", shortcutName);
+                    shortcutFullName = string.Format("{0}.lnk", shortcutFullName);
                     //重新创建快捷方式对象
-                    wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutName);
+                    wshShortcut = (IWshShortcut)wshShell.CreateShortcut(shortcutFullName);
                 }
                 else
                 {
