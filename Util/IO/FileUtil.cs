@@ -2,10 +2,8 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security;
 using Util.Common;
 using Util.DataObject;
 using Util.IO.Log;
@@ -43,7 +41,7 @@ namespace Util.IO
         public static bool IsDirectory(string fromPath)
         {
             //如果能获取到路径指向的文件或文件夹的扩展名，就认为是文件，否则是文件夹
-            return  StringUtil.IsEmpty(Path.GetExtension(fromPath));
+            return StringUtil.IsEmpty(Path.GetExtension(fromPath));
         }
 
         /// <summary>
@@ -360,13 +358,13 @@ namespace Util.IO
         /// <param name="filePath">要创建快捷方式的文件</param>
         /// <param name="fileDescription">要写在快捷方式内的描述</param>
         /// <param name="args">快捷方式要传给程序的参数</param>
-        public static void CreateShortcut(string filePath,string fileDescription,params object[] args)
+        public static void CreateShortcut(string filePath, string fileDescription, params object[] args)
         {
             try
             {
                 InternalCreateShortcut(filePath, fileDescription, args);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogUtil.WriteException(ex.ToString());
             }
@@ -414,7 +412,7 @@ namespace Util.IO
             catch (Exception ex)
             {
                 //错误码0x80020009:快捷方式后缀名必须是.lnk,提示这个错误是指快捷方式后缀名错误
-                if(StringUtil.GetInt(ex.HResult.ToString("x2")) == 80020009)
+                if (StringUtil.GetInt(ex.HResult.ToString("x2")) == 80020009)
                 {
                     //给快捷方式完整路径和文件名加上lnk文件后缀
                     shortcutName = string.Format("{0}.lnk", shortcutName);
