@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Util.DataObject;
 
 namespace Util.Common
 {
@@ -166,6 +167,56 @@ namespace Util.Common
                 }
             }
             return result.ToArray();
+        }
+
+        /// <summary>
+        /// 生成固定长度的随机数字字符串
+        /// <para>可用于生成订单编号或交易流水号</para>
+        /// <para>绝对不会重复</para>
+        /// </summary>
+        /// <param name="length">要生成的字符串的长度</param>
+        /// <returns></returns>
+        public static string GenerateRandomNo(int length)
+        {
+            //根据GUID计算种子
+            int seed = Guid.NewGuid().GetHashCode();
+            //根据种子生成随机数
+            Random random = new Random(seed);
+            //生成初始随机数数组
+            int[] index = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                index[i] = i + 1;
+            }
+            //用来保存随机生成的不重复的数 
+            int[] resultArray = new int[length];
+            //设置上限
+            int max = length;
+            int currentIndex;
+            //获取index数组中索引为currentIndex位置的数据，赋给结果数组resultArray的i索引位置
+            for (int i = 0; i < length; i++)
+            {
+                //生成随机索引数
+                currentIndex = random.Next(0, max - 1);
+                //在随机索引位置取出一个数，保存到结果数组
+                resultArray[i] = index[currentIndex];
+                //作废当前索引位置数据，并用数组的最后一个数据代替之
+                index[currentIndex] = index[max - 1];
+                //索引位置的上限减一（弃置最后一个数据）
+                max--;
+            }
+            string result = string.Empty;
+            //将生成出来的随机数数组转换为字符串
+            for (int i = 0; i < resultArray.Length; i++)
+            {
+                result += StringUtil.GetString(resultArray[i]);
+            }
+            //限制字符串长度为生成的字符串的长度
+            if (result.Length > length)
+            {
+                result = result.Substring(0,length);
+            }
+            return result;
         }
     }
 }
