@@ -15,7 +15,7 @@ namespace Util.Common
         /// <summary>
         /// 随机抽取个数
         /// </summary>
-        public static uint RandomCount { get; private set; }
+        public static uint RandomCount { get; set; }
 
         /// <summary>
         /// 是否允许抽取的结果存在重复
