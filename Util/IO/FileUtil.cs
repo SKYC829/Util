@@ -111,6 +111,7 @@ namespace Util.IO
         {
             //初始化返回值
             string result = string.Empty;
+#if !UNITY
             //调用Win32的保存文件对话框
             SaveFileDialog fileDialog = new SaveFileDialog();
             //设置默认显示的名字
@@ -128,6 +129,7 @@ namespace Util.IO
                 result = fileDialog.FileName;
                 onSave?.Invoke();
             }
+#endif
             return result;
         }
 
@@ -190,6 +192,7 @@ namespace Util.IO
         {
             //初始化返回值
             List<string> results = new List<string>();
+#if !UNITY
             //调用Win32的打开文件对话框
             OpenFileDialog fileDialog = new OpenFileDialog();
             //如果初始路径为空，就设置为应用程序根目录，否则会被定位到C盘
@@ -213,6 +216,7 @@ namespace Util.IO
                 results.AddRange(fileDialog.FileNames);
                 onOpen?.Invoke();
             }
+#endif
             return results.ToArray();
         }
 
