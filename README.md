@@ -1,8 +1,9 @@
-# 项目:Util(No longer supposts soon)
+# 项目:Util
 > - 开始时间: 2020/05/01 00:45
 > - 结束时间: 2020/05/13 00:15
 > - 项目作者: SKYC
-
+-----
+### 此项目已不再维护,建议使用基于NetCore的新项目 [Neko.Utility.Core](https://github.com/SKYC829/Neko.Utility.Core) ###
 -----
 ## 说明
 ```
